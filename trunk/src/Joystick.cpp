@@ -5,10 +5,11 @@
 
 Joystick::Joystick(void)
 {
-	unsigned int numJoysticks = joyGetNumDevs();
-	JOYINFOEX info;
-	MMRESULT result = joyGetPosEx(0, &info);
+	//unsigned int numJoysticks = joyGetNumDevs();
+	//JOYINFOEX info;
+	//MMRESULT result = joyGetPosEx(0, &info);
 
+	// TODO how do I get the joystick id
 }
 
 Joystick::~Joystick(void)
@@ -37,7 +38,13 @@ void Joystick::update(double timeNow)
 	buttons_[7] = (info.dwButtons & JOY_BUTTON8) != 0;
 	buttons_[8] = (info.dwButtons & JOY_BUTTON9) != 0;
 	buttons_[9] = (info.dwButtons & JOY_BUTTON10) != 0;
+	buttons_[10] = (info.dwButtons & JOY_BUTTON11) != 0;
+	buttons_[11] = (info.dwButtons & JOY_BUTTON12) != 0;
 
+	// DPad
+	buttons_[12] = info.dwPOV != JOY_POVCENTERED && (info.dwPOV >= JOY_POVFORWARD && info.dwPOV < JOY_POVRIGHT) || info.dwPOV > JOY_POVLEFT;// Up
+	buttons_[13] = info.dwPOV != JOY_POVCENTERED && info.dwPOV > JOY_POVFORWARD && info.dwPOV < JOY_POVBACKWARD;// Right
+	buttons_[14] = info.dwPOV != JOY_POVCENTERED && info.dwPOV > JOY_POVRIGHT && info.dwPOV < JOY_POVLEFT;// Down
+	buttons_[15] = info.dwPOV != JOY_POVCENTERED && info.dwPOV > JOY_POVBACKWARD;// Left
 
-	// TODO DPad
 }

@@ -19,8 +19,8 @@ void Camera::initialise()
 void Camera::update(double timeNow) 
 {
 	j.update(timeNow);
-	yaw_ += j.axis(0) * 0.0005f;
-	pitch_ += -j.axis(1) * 0.0005f;	
+	yaw_ += j.axis(0) * 0.005f;
+	pitch_ += -j.axis(1) * 0.005f;	
 	
 	Mouse &m = *Mouse::instance();
 
