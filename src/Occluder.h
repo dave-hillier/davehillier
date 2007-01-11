@@ -1,5 +1,6 @@
 #pragma once
 
+// TODO UNIT TEST
 // TODO move implementation to Cpp
 #include "maths/plane.h"
 #include "maths/vector.h"
@@ -19,17 +20,25 @@ public:
 		assert(points.size() >= 3);
 	}
 
+	vector3 transformedEyePoint(const vector3 &eye) const
+	{
+		quaternion q = orientation_;
+		//q.invert();
+		vector3 p1 = q.rotate(eye - position_);
+		return p1;
+	}
+
 	// This is a relative value, how much influence the occluder has on the scene
+	// TODO fix me using occluders behind the eye point!
+	// TODO unit tests would work well
 	float influence(const vector3 &eye) const
 	{
-		vector3 p1 = orientation_.rotate(eye - position_);
+		vector3 p1 = transformedEyePoint(eye);
+		
 		const float distance = theOccluder_.distance(p1);					// Distance from the camera
 		vector3 forward = ((polygon_[0] + polygon_[1] + polygon_[2]) / 3) - p1;
 		forward.norm();
-		quaternion q = orientation_;
-		//q.invert();
-		vector3 norm = q.rotate(theOccluder_.normal());
-		const float cosAngle = -norm.dot(forward);				// Are we facing the camera	
+		const float cosAngle = -theOccluder_.normal().dot(forward);				// Are we facing the camera	
 		const vector3 cross = (polygon_[0] - polygon_[1]) * (polygon_[2] - polygon_[1]);
 		const float areaApproximation = cross.lensquared();
 		return cosAngle * areaApproximation / (distance+1);
@@ -39,7 +48,7 @@ public:
 
 	void update(const vector3 &eye)
 	{
-		vector3 p1 = orientation_.rotate(eye - position_);
+		vector3 p1 = transformedEyePoint(eye);
 		sides_.resize(polygon_.size());
 		std::vector<plane>::iterator p = sides_.begin();
 		for (std::vector<vector3>::const_iterator itt = polygon_.begin(); itt != polygon_.end(); ++itt, ++p)
@@ -53,19 +62,24 @@ public:
 	}
 
 	// Opposite to the frustum, outside this open frustum is what we want!
+
 	bool outside(const vector3 &point) const 
 	{
-		vector3 pointToTest = orientation_.rotate(point - position_);
+		return outside(point, 0);
+	}
+	bool outside(const vector3 &point, float radius) const 
+	{
+		vector3 pointToTest = transformedEyePoint(point);
 		bool result = false;
 
-		if (theOccluder_.distance(point) > 0)
+		if (theOccluder_.distance(point) > -radius)
 			return true;
 
 		for (std::vector<plane>::const_iterator itt = sides_.begin(); 
 			itt != sides_.end(); ++itt)
 		{
 			float distance = (*itt).distance(pointToTest);
-			if (distance > 0)
+			if (distance > -radius)
 			{
 				result = true;
 				break;

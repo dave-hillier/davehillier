@@ -14,7 +14,7 @@ public:
 
 private:
 	enum {
-		nButtons = 10,
+		nButtons = 16,
 		nAxis = 4
 	};
 	float axis_[nAxis];
