@@ -240,6 +240,15 @@ public:
         *this *= qy;
         *this *= qz;
     };
+	void set_orientation_zyx(float ax, float ay, float az) {
+		quaternion qx, qy, qz;
+		qx.set_orientation_x(ax);
+		qy.set_orientation_y(ay);
+		qz.set_orientation_z(az);
+		*this = qz;
+		*this *= qy;
+		*this *= qx;
+	};
 
 	//--- fuzzy compare operators -----------------------------------
     bool isequal(const quaternion& v, float tol) const
