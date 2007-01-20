@@ -7,6 +7,7 @@
 Joystick j;
 
 #include <iostream>
+#include <cassert>
 
 void Camera::initialise()
 {
@@ -19,8 +20,8 @@ void Camera::initialise()
 void Camera::update(double timeNow) 
 {
 	j.update(timeNow);
-	yaw_ += j.axis(0) * 0.005f;
-	pitch_ += -j.axis(1) * 0.005f;	
+	yaw_ += j.axis(2) * 0.001f;
+	pitch_ += -j.axis(3) * 0.001f;	
 	
 	Mouse &m = *Mouse::instance();
 
@@ -30,17 +31,17 @@ void Camera::update(double timeNow)
 		pitch_ += m.relativeY() * 0.005f;
 	}
 	
-	orientation_.set_orientation_xyz(pitch_, yaw_, 0);
-	orientation_.invert();
-
+	orientation_.set_orientation_zyx(-pitch_, -yaw_, -0);
 	vector3 side = orientation_.rotate(vector3(1,0,0));
 	vector3 up = orientation_.rotate(vector3(0,1,0));
 	forward_ = orientation_.rotate(vector3(0,0,-1));
 
 	modelView_.ident();
-	modelView_ = orientation_;
-	modelView_.translate(position_);
-	modelView_.invert();		// TODO with proper maths, this can be removed... hopefully!
+	modelView_.translate(-position_);
+	
+	quaternion invOrientation(orientation_);
+	invOrientation.invert();	
+	modelView_ *= invOrientation;
 
 	float delta = (float)(timeNow - lastUpdate_);
 	delta = delta < 1000 ? delta : 1000;
@@ -53,8 +54,8 @@ void Camera::update(double timeNow)
 	//	position_ += forward_ * -delta * 5;
 	//}
     
-	position_ += forward_ * -delta * j.axis(3) * 10;
-	position_ += side * delta * j.axis(2) * 10;
+	position_ += forward_ * -delta * j.axis(1) * 10;
+	position_ += side * delta * j.axis(0) * 10;
 
 
 	lastUpdate_ = timeNow;
