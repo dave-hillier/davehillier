@@ -1,6 +1,8 @@
 #pragma once
 
-class Mouse
+#include "Service.h"
+
+class Mouse : public Service
 {
 	Mouse();
 public:
@@ -11,6 +13,8 @@ public:
 		static Mouse m;
 		return &m;
 	}
+
+	bool initialise(){return false;}
 
 	void update(double timeNow);
 

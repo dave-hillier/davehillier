@@ -1,14 +1,14 @@
 #pragma once
 
-// TODO perhaps extract an interface latter - its quite easy, but I cant be arsed now
-
+class SimulationManager;
 class RenderManager;
 class TestApp;
 
 class AppFactory
 {
-public:
+private:
 	AppFactory() {}
+public:
 	virtual ~AppFactory() {}
 
 	static AppFactory &instance() {
@@ -17,6 +17,5 @@ public:
 	}
 
 	TestApp* createApplication();
-	RenderManager* createRenderManager();	// Perhaps this isnt entirely the correct place
 
 };

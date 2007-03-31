@@ -6,6 +6,8 @@
 #include "maths/matrix.h"
 #include "maths/quaternion.h"
 
+class Joystick;
+
 class Camera : public Service
 {
 public:
@@ -13,7 +15,7 @@ public:
 	Camera() : lastUpdate_(0), position_(0,0,0), pitch_(0), yaw_(0) {}
 	virtual ~Camera() {}
 
-	void initialise();
+	bool initialise();
 	void position(const vector3 &pos) { position_ = pos; }
 
 	const vector3 &position() const { return position_; }
@@ -24,9 +26,9 @@ public:
 	const matrix44 &modelView() const { return modelView_; }
 	const quaternion &rotateInverse() const { return orientation_; }	// Why do I have to use the inverse?
 
-	void update(double timeNow);
+	virtual void update(double timeNow);
 
-private:
+protected:
 	
 	matrix44 modelView_;
 	quaternion orientation_;
@@ -34,6 +36,7 @@ private:
 	vector3 position_;
 	vector3 forward_;
 	float pitch_, yaw_;
+	Joystick *joystick_;
 };
 
 #endif

@@ -4,8 +4,8 @@
 	A simple wrapper for a TGA file.
 */
 
-#ifndef RASTERFILE_TGAImage_h
-#define RASTERFILE_TGAImage_h
+#ifndef TGAImage_h
+#define TGAImage_h
 
 #include <stdio.h>
 

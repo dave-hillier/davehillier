@@ -4,22 +4,22 @@
 #include "DebugLog.h"
 #include "Font.h"
 #include "Joystick.h"
-Joystick j;
+#include "JoystickManager.h"
 
 #include <iostream>
 #include <cassert>
 
-void Camera::initialise()
+bool Camera::initialise()
 {
 	forward_ = vector3(0,0,-1);
+	joystick_ = JoystickManager::instance().getJoystick(0);
+
+	return true;
 }
-
-
-
 
 void Camera::update(double timeNow) 
 {
-	j.update(timeNow);
+	Joystick &j = *joystick_;
 	yaw_ += j.axis(2) * 0.001f;
 	pitch_ += -j.axis(3) * 0.001f;	
 	
