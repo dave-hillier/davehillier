@@ -1,7 +1,16 @@
 #pragma once
 
+#include <vector>
+
+#include "Renderable.h"
+
 class Font;
 class Camera;
+
+class _vector3;
+typedef _vector3 vector3;
+class quaternion;
+
 
 // TODO extract interface at some point
 class RenderManager
@@ -14,10 +23,15 @@ public:
 	virtual void resize(unsigned int w, unsigned int h);
 	virtual void render(double timeNow);
 
-	virtual void renderOrthographic();
-	virtual void renderPerspective();
+	virtual void renderOrthographic(double timeNow);
+	virtual void renderPerspective(double timeNow);
 
 	static void checkError(const char* where);
+
+	bool add(Renderable *thing);
+	bool remove(Renderable *thing);
+
+	Camera* camera() const { return testCamera_; }
 
 protected:
 	virtual void setPerspective(unsigned int w, unsigned int h, float near, float far);
@@ -36,4 +50,6 @@ private:
 
 	float fps_;
 	double lastUpdate_;
+
+	std::vector<Renderable *> things_;
 };

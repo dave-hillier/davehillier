@@ -3,10 +3,13 @@
 	
 #include "AppFactory.h"
 #include "RenderManager.h"
+#include "SimulationManager.h"
 #include "Timer.h"
 #include "Service.h"
 #include "Mouse.h"
-
+#include "JoystickManager.h"
+#include "ParticleSystem.h"
+#include "State.h"
 
 #include <glh/glh_glut.h>
 
@@ -16,6 +19,7 @@
 #ifdef WIN32
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
+#pragma comment(lib, "ode.lib")
 #endif		
 
 namespace {
@@ -77,28 +81,43 @@ namespace {
 	};
 }
 
+TestApp* hack_;
 
+TestApp& globalApp()
+{
+	return *hack_;
+}
 
 TestApp::TestApp() : 
 	timer_(new Timer),
 	width_(720),
 	height_(480),
-	fullscreen_(false),
-	renderManager_(NULL)
+	fullscreen_(false)
 {
-
+	hack_ = this;
+	renderManager_ = new RenderManager;
+	simulationManager_ = new SimulationManager;
 }
 
 void TestApp::update() 
 {
 	const double timeNow = timer_->currentTime();
+
+	// TODO reduce the frequency?
 	// TODO replace with a for each?
-	for (std::vector<Service*>::iterator itt = services_.begin(); itt != services_.end(); ++itt)
+	if ( timeNow > nextUpdate_ )
 	{
-		(*itt)->update(timeNow);
+		const float step = 0.02f;
+		nextUpdate_ = timeNow + step;
+		for (std::vector<Service*>::iterator itt = services_.begin(); itt != services_.end(); ++itt)
+		{
+			(*itt)->update(timeNow);
+		}
+
+		simulationManager_->update(timeNow); // TODO fix me!
+		lastUpdate_ = timeNow;
 	}
 
-	Mouse::instance()->update(timeNow);
 }
 
 void TestApp::render() 
@@ -153,12 +172,23 @@ bool TestApp::initialise(int argc, char **argv)
 
 	//const char *ext = (const char*)glGetString(GL_EXTENSIONS);
 	//std::cout << strstr(ext, "GL_EXT_framebuffer_object") << std::endl;
+	renderManager_->initialise();
+	simulationManager_->initialise();
 
-	renderManager_ = AppFactory::instance().createRenderManager();
-	assert(renderManager_);
-	screenResize(width_, height_);	
+	screenResize(width_, height_);
+
+	ParticleSystem *pMan = new ParticleSystem; // Owned by service manager
+	pMan->initialise();
+	add(pMan);
 
 	return result;
+}
+
+
+bool TestApp::add(Service *s)
+{
+	services_.push_back(s);
+	return true;
 }
 
 

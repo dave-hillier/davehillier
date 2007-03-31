@@ -29,8 +29,6 @@ public:
 	}
 
 	// This is a relative value, how much influence the occluder has on the scene
-	// TODO fix me using occluders behind the eye point!
-	// TODO unit tests would work well
 	float influence(const vector3 &eye) const
 	{
 		vector3 p1 = transformedEyePoint(eye);

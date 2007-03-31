@@ -22,6 +22,7 @@
 #include "Occluder.h"
 #include "Frustum.h"
 
+
 inline std::ostream& operator<< (std::ostream& os, const vector3 &v )
 {
 	os << "(" << v.x << ", " << v.y << ", " << v.z << ")"; 
@@ -62,13 +63,82 @@ namespace {
 	}
 }
 
+//class vector3;
+//class quaternion;
+class sphere;
 
-// TODO Two scene graphs, one for 
-class Renderable
+#include "JoystickManager.h"
+#include "Joystick.h"
+
+class ChaseThing
 {
-	virtual ~Renderable() {}
+public:
+	virtual const vector3 &position() const = 0;
+	virtual const quaternion &orientation() const = 0;
 };
 
+class StaticCamera : public Camera
+{
+public:
+	// TODO set pos, and orientation
+	void update(double timeNow) 
+	{
+		orientation_.set_orientation_zyx(-pitch_, -yaw_, -0);
+		modelView_.ident();
+		modelView_.translate(-position_);
+		quaternion invOrientation(orientation_);
+		invOrientation.invert();	
+		modelView_ *= invOrientation;
+		lastUpdate_ = timeNow;
+	}
+};
+
+class EyeCamera : public Camera
+{
+public:
+	EyeCamera(ChaseThing *thing) : thing_(thing) {}
+	void update(double timeNow) 
+	{
+		orientation_ = thing_->orientation();
+		position_ = thing_->position();
+
+		modelView_.ident();
+		modelView_.translate(-position_);
+		quaternion invOrientation(orientation_);
+		invOrientation.invert();	
+		modelView_ *= invOrientation;
+		lastUpdate_ = timeNow;
+	}
+private:
+	ChaseThing *thing_;
+};
+#include "Entity.h"
+Entity *ent1=NULL;
+
+class ChaseCamera : public Camera
+{
+public:
+	ChaseCamera(Entity *thing) : thing_(thing) { }
+	void update(double timeNow) 
+	{
+		quaternion q = thing_->orientation();
+
+		vector3 back = q.rotate(vector3(0,0,-1));
+		vector3 up = q.rotate(vector3(0,1,0));
+		position_ = thing_->position() - (back * 10) + (up * 3) ;
+
+		orientation_;//.set(-back.x, -back.y, -back.z, 0);
+
+		modelView_.ident();
+		modelView_.translate(-position_);
+		quaternion invOrientation(orientation_);
+		invOrientation.invert();	
+		modelView_ *= invOrientation;
+		lastUpdate_ = timeNow;
+	}
+private:
+	Entity *thing_;
+};
 
 // TODO move to utility
 void RenderManager::checkError(const char* where)
@@ -100,10 +170,15 @@ RenderManager::~RenderManager()
 
 bool RenderManager::initialise()
 {
+
 	fpsDisplay_ = new Font("Arial", 25, false, false);
 	fpsDisplay_->initialise();
 
-	testCamera_ = new Camera;
+	ent1 = new Entity;
+
+	testCamera_ = new ChaseCamera(ent1);
+	//testCamera_ = new StaticCamera;
+	//testCamera_ = new Camera;
 	testCamera_->initialise();
 
 	bool result = true;
@@ -127,7 +202,7 @@ bool RenderManager::initialise()
 	return result;
 }
 
-void RenderManager::renderOrthographic()
+void RenderManager::renderOrthographic(double timeNow)
 {
 	glPushMatrix();
 	glColor3f(1,1,1);
@@ -143,7 +218,16 @@ void RenderManager::renderOrthographic()
 	checkError("renderOrthographic");
 }
 
-void RenderManager::renderPerspective()
+
+template<int N> void lerp(const float a[N], const float b[N], float c[N], float d)
+{
+	for (int i =0; i < N; ++i)
+	{
+		c[i] = a[i]*d + b[i]*(1-d); 
+	}
+}
+
+void RenderManager::renderPerspective(double timeNow)
 {
 
 	matrix44 projection;
@@ -156,24 +240,31 @@ void RenderManager::renderPerspective()
 	const vector3 &eye = testCamera_->position();
 
 	// Set the background
-	//float backgroundColour[] = {0.f,0.5f,0.6f, 1};
-	//glClearColor(backgroundColour[0], backgroundColour[1], backgroundColour[2], backgroundColour[3]);
-	//glFogfv(GL_FOG_COLOR, backgroundColour);
-	//glFogf(GL_FOG_DENSITY, 1.f);
-	//glHint(GL_FOG_HINT, GL_DONT_CARE);
-	//glFogf(GL_FOG_START, near_+10);
-	//glFogf(GL_FOG_END, far_);
-	//glFogi(GL_FOG_MODE, GL_LINEAR);
+	float blueish[4] = {0.f,0.5f,0.6f, 1};
+	float black[4] = {0.f,0.f,0.f, 1};
+	float backgroundColour[4];
 
-	//glEnable(GL_FOG);
+	float distance = 200;
+	float altitude = eye.y;
+	float v =  min(1-(altitude/distance),1);
+	lerp<4>(blueish, black, backgroundColour, v);
 
-	// Draw some cubes
-	/*
+	glClearColor(backgroundColour[0], backgroundColour[1], backgroundColour[2], backgroundColour[3]);
+	glFogfv(GL_FOG_COLOR, backgroundColour);
+	glFogf(GL_FOG_DENSITY, 1.f);
+	glHint(GL_FOG_HINT, GL_DONT_CARE);
+	glFogf(GL_FOG_START, near_+10);
+	glFogf(GL_FOG_END, near_+10+distance);	// TODO is it a function of altitude?
+	glFogi(GL_FOG_MODE, GL_LINEAR);
+	glEnable(GL_FOG);
+
+	for (std::vector<Renderable*>::iterator itt = things_.begin(); itt != things_.end(); ++itt)
+	{
+		(*itt)->render(timeNow);
+	}
+	
 	glPushMatrix();
-	if (out)
-		glColor3f(0.9f,0.9f,0.9f);
-	else
-		glColor3f(0.1f,0.9f,0.9f);
+	glColor3f(0.1f,0.9f,0.9f);
 
 	glTranslatef(0, 0, -20);
 	drawLineCube(10);
@@ -202,7 +293,7 @@ void RenderManager::renderPerspective()
 	glTranslatef(0, 0, -20);
 	drawLineCube(10);
 	glPopMatrix();
-	//glDisable(GL_FOG);*/
+	glDisable(GL_FOG);
 
 	//glPushMatrix();
 	//const vector3 &f = testCamera_->forward() * 50 + testCamera_->position();
@@ -218,14 +309,13 @@ void RenderManager::renderPerspective()
 
 void RenderManager::render(double timeNow)
 {
-	testCamera_->update(timeNow);
 	fps_ = 1.f/(float)(timeNow - lastUpdate_);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	renderPerspective();
+	renderPerspective(timeNow);
 
 	startOrthographic(width_, height_, -100, 100);
-	renderOrthographic();
+	renderOrthographic(timeNow);
 	endOrthographic();
 
 	lastUpdate_ = timeNow;
@@ -274,4 +364,24 @@ void RenderManager::endOrthographic()
 	glPopMatrix();   
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
+}
+
+bool RenderManager::add(Renderable *thing)
+{
+	bool result = true;
+	assert(thing);
+	
+	things_.push_back(thing);
+
+	return result;
+}
+bool RenderManager::remove(Renderable *thing)
+{
+	bool result = false;
+	assert(thing);
+	assert(false); // TODO implement
+
+	
+
+	return result;
 }
