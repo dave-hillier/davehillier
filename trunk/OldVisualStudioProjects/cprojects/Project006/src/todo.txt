@@ -1,0 +1,17 @@
+C:\OpeGLStuff\Project006\src\p6_text.c(68):void drawString (int x, int y, char *str)
+			Improve this Considerably
+			allow for use of shadows, bold and italic & \n text parsing
+C:\OpeGLStuff\Project006\src\p6_texture.c(77):	/*	MessageBox(NULL, 
+C:\OpeGLStuff\Project006\src\p6_texture.c(86):	/*	MessageBox(NULL, 
+C:\OpeGLStuff\Project006\src\p6_texture.c(250):	//	ConPrintf("GetTexture: Cant open %s\n", name);
+			Replace with internal messages
+
+C:\OpeGLStuff\Project006\src\p6_texture.c(213):int GetTexture (char name)
+			Make more shophistocated
+
+C:\OpeGLStuff\Project006\src\p6_terrain.c(229):	
+			Make a single texture for each patch
+
+C:\OpeGLStuff\Project006\src\todo.txt(1):
+			Click here to edit
+

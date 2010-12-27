@@ -1,0 +1,9 @@
+Kodama
+------
+Console Init Done
+Executing default.cfg...
+hi
+Unknown command: hi
+help
+Unknown command: help
+Normal exit

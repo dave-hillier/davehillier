@@ -1,0 +1,41 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: Project006 - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\WINDOWS\TEMP\RSPF0B3.TMP" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /Fp"Debug/Project006.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\OpeGLStuff\Project006\src\p6_terrain.c"
+]
+Creating command line "cl.exe @C:\WINDOWS\TEMP\RSPF0B3.TMP" 
+Creating temporary file "C:\WINDOWS\TEMP\RSPF0B4.TMP" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib opengl32.lib glu32.lib /nologo /subsystem:windows /incremental:yes /pdb:"Debug/Project006Debug.pdb" /debug /machine:I386 /out:"../Project006Debug.exe" /pdbtype:sept 
+.\Debug\p6_culling.obj
+.\Debug\p6_glmain.obj
+.\Debug\p6_input.obj
+.\Debug\p6_main.obj
+.\Debug\p6_terrain.obj
+.\Debug\p6_tests.obj
+.\Debug\p6_text.obj
+.\Debug\p6_texture.obj
+.\Debug\p6_timing.obj
+]
+Creating command line "link.exe @C:\WINDOWS\TEMP\RSPF0B4.TMP"
+<h3>Output Window</h3>
+Compiling...
+p6_terrain.c
+C:\OpeGLStuff\Project006\src\p6_terrain.c(191) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+Linking...
+
+
+
+<h3>Results</h3>
+Project006Debug.exe - 0 error(s), 1 warning(s)
+</pre>
+</body>
+</html>

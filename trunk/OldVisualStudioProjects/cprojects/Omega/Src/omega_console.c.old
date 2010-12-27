@@ -1,0 +1,322 @@
+#include "omega_common.h"
+#include "omega_gl.h"
+
+#define CON_NUM_LINES		20
+#define CON_LINES			256
+#define CON_BUFFER_SIZE		CON_LINES*CON_LINES_SIZE // hmm bigger smaller??
+#define CON_LINES_SIZE		50
+#define CON_TEXT_SIZE		12
+
+char			*console, *CurrentChar;
+char			ConInputText[128];
+int				CurrentPos, UsedLines, UsedChars, Cursor, CurrentLine;
+bool			ConEnabled;
+extern int		textsize;
+extern int		font_texture;
+
+void ConsoleOn ()
+{
+	ConEnabled = true;
+}
+void ConsoleOff ()
+{
+	ConEnabled = false;
+}
+
+void ConsoleToggle ()
+{
+	if (ConEnabled)
+		ConEnabled = false;
+	else
+		ConEnabled = true;
+}
+char *eatlines (char *buf, int num)
+{
+	int i, x;
+	char *ptr;
+
+	for (x = 0, ptr = buf, i = num; i > 0; x++, ptr++)
+	{
+		if (*ptr == '\n')//match
+			i--;
+		// does it go over if the line it ends with a return??
+		if (x > CON_LINES_SIZE)
+		{
+			x = 0;
+			i--;
+		}
+	}
+	return ptr;
+}
+
+bool ConInput (int wParam)
+{
+	if (!ConEnabled)
+		return false;
+	// Manage typing, cursor
+	switch (wParam) 
+	{ 
+	case 27:// esc
+		VidShutdown();
+		SaveConfig();
+		PostQuitMessage(0);
+		exit(0);
+		break;
+	case VK_LEFT: 
+		if (Cursor < CON_LINES_SIZE)
+			Cursor++;
+        return true; 
+    case VK_RIGHT:
+		if (Cursor > 0)
+			Cursor--;
+        return true; 
+    case VK_UP: 
+		if (CurrentLine < 100)
+		{
+			CurrentLine++;
+			CurrentChar = eatlines(console, CurrentLine);
+		}
+        return true; 
+    case VK_DOWN: 
+		if (CurrentLine > 0)
+		{
+			CurrentLine--;
+			CurrentChar = eatlines(console, CurrentLine);
+		}
+        return true;     
+	case 33://VK_PAGE_UP: 
+
+        return true; 
+    case 34://VK_PAGE_DOWN: 
+
+        return true; 
+	case VK_F9:
+		ConsoleToggle();
+		return true; 
+	case VK_F1:
+		ConPrintf("Position (%.0f %.0f %.0f)\nAngles (%.0f %.0f %.0f)\n",
+			viewer.pos[0], viewer.pos[1], viewer.pos[2], 
+			viewer.angles[0], viewer.angles[1], viewer.angles[2]);
+		return true; 
+	case VK_F2:
+		ConPrintf("F2 Pressed not return");
+		return true; 
+	case VK_RETURN:
+		ConPrintf("%s", ConInputText);
+		ConInputText[0] = 0;
+		return true; 
+	// End, home pageup pagedown, insert, del backspace
+	// tab - autocomplete
+	}
+/*	if (isalpha(wParam))
+		Add to current buffer
+		
+*/
+	sprintf(ConInputText, "%s%c", ConInputText, wParam);
+	return true; 
+
+
+}
+// TODO : a high priority one so its shown on the screen 
+// without console for a few seconds or till replaced
+//
+void ConPrintf(char *format, ...)
+{
+	va_list		argptr;
+	char		buffer[1024];
+	
+	va_start (argptr, format);
+	vsprintf (buffer, format,argptr);
+	va_end (argptr);
+	
+
+	if (UsedChars > CON_BUFFER_SIZE)
+	{
+	// what happenswhen it gets too big???
+		char *old_con = console;
+		console = (char *)malloc(sizeof(char)*CON_BUFFER_SIZE);
+		strcpy(console, old_con+CON_BUFFER_SIZE/2);// lose 1/2 the text
+		free(old_con);
+		UsedChars = strlen(console);
+	}
+	UsedChars += strlen(buffer);
+
+	strcat(console, buffer);
+}
+
+void ConBack ()
+{
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glOrtho(0, current_vidmode.width, 0, current_vidmode.height, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glDisable(GL_TEXTURE_2D);
+	// Need to do more matricies to set these to proper origins
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
+	glBegin(GL_QUADS);
+	{
+		// This could be the default object? maybe
+		glColor4f  (0.0f,	0.5f,	0.0f,	0.1f);
+		glVertex3f (current_vidmode.width-10,
+			current_vidmode.height/4+CON_NUM_LINES*CON_TEXT_SIZE,	0.0f);
+		glVertex3f (10.0f,	
+			current_vidmode.height/4+CON_NUM_LINES*CON_TEXT_SIZE,	0.0f);
+		glVertex3f (10.0f,	
+			current_vidmode.height/4-CON_TEXT_SIZE*2,	0.0f);
+		glVertex3f (current_vidmode.width-10,
+			current_vidmode.height/4-CON_TEXT_SIZE*2,	0.0f);
+
+	}
+	glEnd();
+	glDisable(GL_BLEND);
+	glBegin(GL_LINES);
+	{
+		glColor4f  (0.0f,	1.0f,	0.0f,	1.0f);
+		glVertex3f (current_vidmode.width-10,	
+			current_vidmode.height/4+CON_NUM_LINES*CON_TEXT_SIZE,	0.0f);
+		glVertex3f (current_vidmode.width-10,
+			current_vidmode.height/4-CON_TEXT_SIZE*2,	0.0f);
+
+		glVertex3f (current_vidmode.width-10,	
+			current_vidmode.height/4+CON_NUM_LINES*CON_TEXT_SIZE,	0.0f);
+		glVertex3f (10.0f,	
+			current_vidmode.height/4+CON_NUM_LINES*CON_TEXT_SIZE,	0.0f);
+
+		glVertex3f (10.0f,	
+			current_vidmode.height/4+CON_NUM_LINES*CON_TEXT_SIZE,	0.0f);
+		glVertex3f (10.0f,	
+			current_vidmode.height/4-CON_TEXT_SIZE*2,	0.0f);
+
+		glVertex3f (10.0f,	
+			current_vidmode.height/4-CON_TEXT_SIZE*2,	0.0f);
+		glVertex3f (current_vidmode.width-10,	
+			current_vidmode.height/4-CON_TEXT_SIZE*2,	0.0f);
+	}
+	glEnd();
+	glEnable(GL_TEXTURE_2D);
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();   
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+}
+enum { backup, restore };
+
+
+void ConRender()
+{
+	int i, x=1, y=1;
+	char *ptr;
+
+	if (!ConEnabled)
+		return;
+	ConBack();
+	
+	TextSetMode(backup);
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glOrtho(0, current_vidmode.width, 0, current_vidmode.height, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	
+	// current_vidmode.height/4
+	glBindTexture(GL_TEXTURE_2D, font_texture);
+
+	textsize = CON_TEXT_SIZE;
+	// print all the strings
+
+	for (x = 1, ptr = CurrentChar; *ptr; x++, ptr++)
+	{
+		if (*ptr == '\t')
+		{
+			x += 4;
+		}
+		else if (*ptr == '\n')
+		{
+			y += 1;
+			x = 0;
+		}
+		else
+		{
+			if (y >= CON_NUM_LINES+1)
+				break;			
+			RenderChar(*ptr, 
+				10+CON_TEXT_SIZE*(x-1), 
+				current_vidmode.height*3/4 - y*CON_TEXT_SIZE, 
+				CON_TEXT_SIZE);
+
+			if (x > CON_LINES_SIZE)
+			{
+				y++;
+				x = 0;
+			}
+		}
+	}
+	for (y = 1, x = 1, ptr = ConInputText; *ptr; x++, ptr++)
+	{
+		if (*ptr == '\t')
+		{
+			x += 4;
+		}
+		else if (*ptr == '\n')
+		{
+			y += 1;
+			x = 0;
+		}
+		else
+		{
+			if (y >= CON_NUM_LINES+1)
+				break;			
+			RenderChar(*ptr, 
+				10+CON_TEXT_SIZE*(x-1), 
+				current_vidmode.height/4 - y*CON_TEXT_SIZE, 
+				CON_TEXT_SIZE);
+
+			if (x > CON_LINES_SIZE)
+			{
+				y++;
+				x = 0;
+			}
+		}
+	}
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();   
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+	TextSetMode(restore);
+
+}
+void ConDump (char *filename)
+{
+	FILE *fileptr;
+	int i;
+
+	if (fileptr = fopen(filename, "w"))
+	{
+		fprintf(fileptr, "%s", console);
+		fclose(fileptr);
+	}
+}
+void ConInit()
+{
+	ConEnabled = false;
+	UsedChars = 0;
+	UsedLines = 0;
+
+	console = (char *)malloc(CON_BUFFER_SIZE);
+	memset(console, 0, CON_BUFFER_SIZE);
+	CurrentChar = console;
+
+}
+

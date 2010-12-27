@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DShSDL", "DShSDL.vcproj", "{BA7384A2-FF31-4B29-8223-8D076DDA45DB}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{BA7384A2-FF31-4B29-8223-8D076DDA45DB}.Debug.ActiveCfg = Debug|Win32
+		{BA7384A2-FF31-4B29-8223-8D076DDA45DB}.Debug.Build.0 = Debug|Win32
+		{BA7384A2-FF31-4B29-8223-8D076DDA45DB}.Release.ActiveCfg = Release|Win32
+		{BA7384A2-FF31-4B29-8223-8D076DDA45DB}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

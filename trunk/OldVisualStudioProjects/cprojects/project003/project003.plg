@@ -1,0 +1,49 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: project003 - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\WINDOWS\TEMP\RSPE373.TMP" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /Fp"Debug/project003.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\glStuff\project003\input.c"
+"C:\glStuff\project003\project003.c"
+"C:\glStuff\project003\window.c"
+]
+Creating command line "cl.exe @C:\WINDOWS\TEMP\RSPE373.TMP" 
+Creating temporary file "C:\WINDOWS\TEMP\RSPE374.TMP" with contents
+[
+winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib opengl32.lib glu32.lib dxguid.lib /nologo /subsystem:windows /incremental:yes /pdb:"Debug/project003.pdb" /debug /machine:I386 /out:"Debug/project003.exe" /pdbtype:sept 
+.\Debug\gl_draw.obj
+.\Debug\gl_text.obj
+.\Debug\input.obj
+.\Debug\project003.obj
+.\Debug\screenshot.obj
+.\Debug\utils.obj
+.\Debug\window.obj
+]
+Creating command line "link.exe @C:\WINDOWS\TEMP\RSPE374.TMP"
+<h3>Output Window</h3>
+Compiling...
+input.c
+C:\glStuff\project003\input.c(11) : warning C4013: 'ScreenShot' undefined; assuming extern returning int
+C:\glStuff\project003\input.c(15) : warning C4013: 'ShutdownVid' undefined; assuming extern returning int
+project003.c
+C:\glStuff\project003\project003.c(16) : warning C4013: 'InitGL' undefined; assuming extern returning int
+C:\glStuff\project003\project003.c(30) : warning C4013: 'RenderScene' undefined; assuming extern returning int
+window.c
+C:\glStuff\project003\window.c(27) : warning C4013: 'KeyUp' undefined; assuming extern returning int
+C:\glStuff\project003\window.c(31) : warning C4013: 'KeyDown' undefined; assuming extern returning int
+C:\glStuff\project003\window.c(125) : warning C4013: 'Error' undefined; assuming extern returning int
+Linking...
+
+
+
+<h3>Results</h3>
+project003.exe - 0 error(s), 7 warning(s)
+</pre>
+</body>
+</html>

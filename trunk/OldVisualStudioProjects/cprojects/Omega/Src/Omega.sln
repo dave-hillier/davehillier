@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Omega", "Omega.vcproj", "{9F117A64-E474-486D-AEBB-ECF0EAE4AA0B}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mdh", "mdh\mdh.vcproj", "{427C8F09-5DD6-41DD-8DDE-24D7CD844909}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{9F117A64-E474-486D-AEBB-ECF0EAE4AA0B}.Debug.ActiveCfg = Debug|Win32
+		{9F117A64-E474-486D-AEBB-ECF0EAE4AA0B}.Debug.Build.0 = Debug|Win32
+		{9F117A64-E474-486D-AEBB-ECF0EAE4AA0B}.Release.ActiveCfg = Release|Win32
+		{9F117A64-E474-486D-AEBB-ECF0EAE4AA0B}.Release.Build.0 = Release|Win32
+		{427C8F09-5DD6-41DD-8DDE-24D7CD844909}.Debug.ActiveCfg = Debug|Win32
+		{427C8F09-5DD6-41DD-8DDE-24D7CD844909}.Debug.Build.0 = Debug|Win32
+		{427C8F09-5DD6-41DD-8DDE-24D7CD844909}.Release.ActiveCfg = Release|Win32
+		{427C8F09-5DD6-41DD-8DDE-24D7CD844909}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

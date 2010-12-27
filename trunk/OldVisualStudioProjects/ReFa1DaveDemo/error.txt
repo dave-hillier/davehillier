@@ -1,0 +1,4 @@
+Console Init Done
+======
+turret1turret1turret1turret1turret1turret1turret1turret1turret1turret1turret1turret1turret1turret1turret1turret1turret1turret1turret1turret1turret1turret1turret1hit turret1 health 75
+turret1hit turret1 health 0

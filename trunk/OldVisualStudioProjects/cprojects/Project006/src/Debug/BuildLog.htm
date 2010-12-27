@@ -1,0 +1,69 @@
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=Windows-1252">
+</head>
+<body>
+<pre>
+<table width=100% bgcolor=#CFCFE5><tr> <td> <font face=arial size=+3>
+Build Log
+</font></table><table width=* cellspacing=0 cellpadding=0><tr><td width=0 bgcolor=#EDEDF5>&nbsp;</td><td width=0 bgcolor=#FFFFFF>&nbsp;</td><td width=*><pre>
+<h3>------- Build started: Project: Project006, Configuration: Debug|Win32 -------
+</h3>
+</pre></table><table width=100% bgcolor=#DFDFE5><tr><td><font face=arial size=+2>
+Command Lines
+</font></table><table width=* cellspacing=0 cellpadding=0><tr><td width=0 bgcolor=#EDEDF5>&nbsp;</td><td width=0 bgcolor=#FFFFFF>&nbsp;</td><td width=*><pre>Creating temporary file "c:\Documents and Settings\Dave\Desktop\my crap attemps\Project006\src\Debug\RSP000001.rsp" with contents
+[
+/Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /FD /EHsc /RTC1 /MLd /YX"stdafx.h" /Fp".\Debug/Project006.pch" /Fo".\Debug/" /Fd".\Debug/" /W3 /c /ZI /TC
+".\p6_timing.c"
+".\p6_texture.c"
+".\p6_text.c"
+".\p6_tests.c"
+".\p6_terrain.c"
+".\p6_main.c"
+".\p6_input.c"
+".\p6_glmain.c"
+".\p6_culling.c"
+]
+Creating command line "cl.exe @"c:\Documents and Settings\Dave\Desktop\my crap attemps\Project006\src\Debug\RSP000001.rsp" /nologo"
+Creating temporary file "c:\Documents and Settings\Dave\Desktop\my crap attemps\Project006\src\Debug\RSP000002.rsp" with contents
+[
+/OUT:"../Project006Debug.exe" /INCREMENTAL:NO /NOLOGO /DEBUG /PDB:".\Debug/Project006Debug.pdb" /SUBSYSTEM:WINDOWS /MACHINE:X86 odbc32.lib odbccp32.lib opengl32.lib glu32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
+".\Debug\p6_culling.obj"
+".\Debug\p6_glmain.obj"
+".\Debug\p6_input.obj"
+".\Debug\p6_main.obj"
+".\Debug\p6_terrain.obj"
+".\Debug\p6_tests.obj"
+".\Debug\p6_text.obj"
+".\Debug\p6_texture.obj"
+".\Debug\p6_timing.obj"
+]
+Creating command line "link.exe @"c:\Documents and Settings\Dave\Desktop\my crap attemps\Project006\src\Debug\RSP000002.rsp""
+</pre></table><table width=100% bgcolor=#DFDFE5><tr><td><font face=arial size=+2>
+Output Window
+</font></table><table width=* cellspacing=0 cellpadding=0><tr><td width=0 bgcolor=#EDEDF5>&nbsp;</td><td width=0 bgcolor=#FFFFFF>&nbsp;</td><td width=*><pre>Compiling...
+p6_timing.c
+p6_texture.c
+p6_text.c
+c:\Documents and Settings\Dave\Desktop\my crap attemps\Project006\src\p6_text.c(46) : warning C4013: 'GetTexture' undefined; assuming extern returning int
+p6_tests.c
+c:\Documents and Settings\Dave\Desktop\my crap attemps\Project006\src\p6_tests.c(69) : warning C4013: 'GetTexture' undefined; assuming extern returning int
+p6_terrain.c
+c:\Documents and Settings\Dave\Desktop\my crap attemps\Project006\src\p6_terrain.c(191) : warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+p6_main.c
+c:\Documents and Settings\Dave\Desktop\my crap attemps\Project006\src\p6_main.c(121) : warning C4013: 'TimeInit' undefined; assuming extern returning int
+c:\Documents and Settings\Dave\Desktop\my crap attemps\Project006\src\p6_main.c(122) : warning C4013: 'TerrainInit' undefined; assuming extern returning int
+c:\Documents and Settings\Dave\Desktop\my crap attemps\Project006\src\p6_main.c(154) : warning C4013: 'KeyDown' undefined; assuming extern returning int
+p6_input.c
+p6_glmain.c
+c:\Documents and Settings\Dave\Desktop\my crap attemps\Project006\src\p6_glmain.c(85) : warning C4013: 'TerrainFrame' undefined; assuming extern returning int
+c:\Documents and Settings\Dave\Desktop\my crap attemps\Project006\src\p6_glmain.c(101) : warning C4013: 'drawString' undefined; assuming extern returning int
+p6_culling.c
+Linking...
+LINK : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
+</pre></table><table width=100% bgcolor=#DFDFE5><tr><td><font face=arial size=+2>
+Results
+</font></table><table width=* cellspacing=0 cellpadding=0><tr><td width=0 bgcolor=#EDEDF5>&nbsp;</td><td width=0 bgcolor=#FFFFFF>&nbsp;</td><td width=*><pre>
+Build log was saved at "file://c:\Documents and Settings\Dave\Desktop\my crap attemps\Project006\src\Debug\BuildLog.htm"
+Project006 - 0 error(s), 9 warning(s)</pre></table><table   width=100% height=20 bgcolor=#CFCFE5><tr><td><font face=arial size=+2>
+</font></table></body></html>
