@@ -1,0 +1,18 @@
+To do:
+------
+Displaying 2d images over the screen, the cursor for example
+
+Interpolation
+Physics
+Lighting
+Timing
+
+Map mesh creation 
+Normal Mesh creation from a list of vertices
+Model storage maybe use glCallList
+
+Render list of entities, which will include only those visible?
+
+Controls need implementing
+Skeletal Animation?
+Partical System?

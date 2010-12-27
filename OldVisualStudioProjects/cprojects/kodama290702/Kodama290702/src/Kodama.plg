@@ -1,0 +1,54 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: Kodama - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\dave\LOCALS~1\Temp\RSP4F9.tmp" with contents
+[
+/nologo /MD /W3 /Gm /GX /ZI /Od /I "C:\SDK\SDL-1.2.4\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /Fp"Debug/Kodama.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\Documents and Settings\dave\My Documents\My Code\Kodama\src\Terrain.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\dave\LOCALS~1\Temp\RSP4F9.tmp" 
+Creating temporary file "C:\DOCUME~1\dave\LOCALS~1\Temp\RSP4FA.tmp" with contents
+[
+SDL.lib SDLmain.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib opengl32.lib glu32.lib ijl15.lib /nologo /subsystem:windows /profile /debug /machine:I386 /out:"../KodamaDbg.exe" /libpath:"C:\SDK\SDL-1.2.4\lib" 
+".\Debug\ase_model.obj"
+".\Debug\Binds.obj"
+".\Debug\Camera.obj"
+".\Debug\Console.obj"
+".\Debug\ConsoleAlias.obj"
+".\Debug\ConsoleCmds.obj"
+".\Debug\ConsoleEdit.obj"
+".\Debug\ConsoleVars.obj"
+".\Debug\EventScheduler.obj"
+".\Debug\Font.obj"
+".\Debug\Frustum.obj"
+".\Debug\GLMain.obj"
+".\Debug\Input.obj"
+".\Debug\Matrix.obj"
+".\Debug\md2_model.obj"
+".\Debug\md4.obj"
+".\Debug\ModelManager.obj"
+".\Debug\ms3d_model.obj"
+".\Debug\Quat.obj"
+".\Debug\SDLmain.obj"
+".\Debug\SDLTimer.obj"
+".\Debug\Terrain.obj"
+".\Debug\Texture.obj"
+]
+Creating command line "link.exe @C:\DOCUME~1\dave\LOCALS~1\Temp\RSP4FA.tmp"
+<h3>Output Window</h3>
+Compiling...
+Terrain.cpp
+Linking...
+
+
+
+<h3>Results</h3>
+KodamaDbg.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: xmaseve - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\WINDOWS\TEMP\RSP7000.TMP" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /Fp"Debug/xmaseve.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\glStuff\xmaseve\glmain.c"
+"C:\glStuff\xmaseve\input.c"
+"C:\glStuff\xmaseve\main.c"
+"C:\glStuff\xmaseve\vid.c"
+]
+Creating command line "cl.exe @C:\WINDOWS\TEMP\RSP7000.TMP" 
+Creating temporary file "C:\WINDOWS\TEMP\RSP7001.TMP" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib opengl32.lib glu32.lib /nologo /subsystem:windows /incremental:yes /pdb:"Debug/xmaseve.pdb" /debug /machine:I386 /out:"Debug/xmaseve.exe" /pdbtype:sept 
+.\Debug\glmain.obj
+.\Debug\input.obj
+.\Debug\main.obj
+.\Debug\vid.obj
+]
+Creating command line "link.exe @C:\WINDOWS\TEMP\RSP7001.TMP"
+<h3>Output Window</h3>
+Compiling...
+glmain.c
+c:\glstuff\xmaseve\glmain.c(58) : warning C4244: '+=' : conversion from 'const double ' to 'int ', possible loss of data
+c:\glstuff\xmaseve\glmain.c(66) : warning C4305: '=' : truncation from 'const double ' to 'float '
+c:\glstuff\xmaseve\glmain.c(70) : warning C4013: 'cos' undefined; assuming extern returning int
+c:\glstuff\xmaseve\glmain.c(70) : warning C4244: '=' : conversion from 'int ' to 'float ', possible loss of data
+c:\glstuff\xmaseve\glmain.c(71) : warning C4013: 'sin' undefined; assuming extern returning int
+c:\glstuff\xmaseve\glmain.c(71) : warning C4244: '=' : conversion from 'int ' to 'float ', possible loss of data
+c:\glstuff\xmaseve\glmain.c(108) : warning C4244: 'function' : conversion from 'int ' to 'float ', possible loss of data
+input.c
+main.c
+C:\glStuff\xmaseve\main.c(17) : warning C4013: 'RenderFrame' undefined; assuming extern returning int
+C:\glStuff\xmaseve\main.c(92) : warning C4013: 'KeyDown' undefined; assuming extern returning int
+vid.c
+C:\glStuff\xmaseve\vid.c(139) : warning C4013: 'glMyInit' undefined; assuming extern returning int
+Linking...
+
+
+
+<h3>Results</h3>
+xmaseve.exe - 0 error(s), 10 warning(s)
+</pre>
+</body>
+</html>

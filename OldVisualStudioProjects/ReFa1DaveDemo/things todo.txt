@@ -1,0 +1,25 @@
+The manager classes are often factories, some posibly more.
+
+Change texture manager to texture factory
+Fix the textures!
+
+TODO 
+Texture <- Texture Factory
+   |
+   Jpeg | Targa           
+
+Move player out of environment
+Integrate collision detection
+Create a graphing tool? deque?
+GUI stuff
+AI behaviours - flocking etc, rules etc
+Joypad
+Integrate proper scripting? Lua or TCL? for the console
+Terrain texture generation
+Lighting (un-bake)/normals
+Test Camera
+Make a renderable interface hopefully allow sorting of transparency, batching some stuff
+Fog... or atmospheric scatering?
+
+
+Integrate ODE

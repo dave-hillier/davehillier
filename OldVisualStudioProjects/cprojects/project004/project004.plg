@@ -1,0 +1,49 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: project004 - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\WINDOWS\TEMP\RSPB274.TMP" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /Fp"Debug/project004.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\glStuff\project004\main.c"
+]
+Creating command line "cl.exe @C:\WINDOWS\TEMP\RSPB274.TMP" 
+Creating temporary file "C:\WINDOWS\TEMP\RSPB275.TMP" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib opengl32.lib glu32.lib /nologo /subsystem:windows /incremental:yes /pdb:"Debug/project004.pdb" /debug /machine:I386 /out:"Debug/project004.exe" /pdbtype:sept 
+.\Debug\gl001.obj
+.\Debug\gltext.obj
+.\Debug\input.obj
+.\Debug\main.obj
+.\Debug\mdh.obj
+]
+Creating command line "link.exe @C:\WINDOWS\TEMP\RSPB275.TMP"
+<h3>Output Window</h3>
+Compiling...
+main.c
+C:\glStuff\project004\main.c(33) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+C:\glStuff\project004\main.c(34) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+C:\glStuff\project004\main.c(35) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+C:\glStuff\project004\main.c(36) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+C:\glStuff\project004\main.c(37) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+C:\glStuff\project004\main.c(38) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+C:\glStuff\project004\main.c(39) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+C:\glStuff\project004\main.c(40) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+C:\glStuff\project004\main.c(41) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+C:\glStuff\project004\main.c(62) : warning C4013: 'KeyDown' undefined; assuming extern returning int
+C:\glStuff\project004\main.c(98) : warning C4013: 'sprintf' undefined; assuming extern returning int
+C:\glStuff\project004\main.c(257) : warning C4013: 'GLInit' undefined; assuming extern returning int
+C:\glStuff\project004\main.c(350) : warning C4013: 'Render' undefined; assuming extern returning int
+Linking...
+
+
+
+<h3>Results</h3>
+project004.exe - 0 error(s), 13 warning(s)
+</pre>
+</body>
+</html>

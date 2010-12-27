@@ -1,0 +1,322 @@
+#include "omega_common.h"
+#include "omega_gl.h"
+#include <math.h>
+
+// needs rewriting to make modular
+// load a RGBA tga, A is heighmap
+// upload the tgas as 256x256 chunks
+typedef struct TriTreeNode TriTreeNode;
+struct TriTreeNode
+{
+	TriTreeNode *LeftChild;
+	TriTreeNode *RightChild;
+	TriTreeNode *BaseNeighbor;
+	TriTreeNode *LeftNeighbor;
+	TriTreeNode *RightNeighbor;
+};
+#define MAP_SIZE		1024
+#define MAX_PATCH		256
+#define TRIS_PER_SIDE	MAP_SIZE/MAX_PATCH// cos textures bigger than this dont seem to work
+
+#define POOL_SIZE	262144	//hope its enough, seems to be plenty
+
+TriTreeNode tripool[POOL_SIZE], *left, *right;
+int NextTri;
+int numtris;
+// the to tris to map the lanscape
+
+//TriTreeNode *left, *right;
+
+typedef struct patch_s {
+	TriTreeNode *left;
+	TriTreeNode *right;
+	int texture;
+} patch_t;
+
+patch_t patch[TRIS_PER_SIDE][TRIS_PER_SIDE];
+
+
+byte *heightmap;
+
+TriTreeNode *AllocateTri ()
+{
+	TriTreeNode *tri;
+	// make faster, apparently by using a pre-allocated pool
+	if (NextTri >= POOL_SIZE)
+		return NULL;
+
+//	tri = (TriTreeNode *)malloc(sizeof(TriTreeNode));
+	tri = &tripool[NextTri++];
+
+	tri->BaseNeighbor = NULL;
+	tri->LeftChild = NULL;
+	tri->LeftNeighbor = NULL;
+	tri->RightChild = NULL;
+	tri->RightNeighbor = NULL;
+	return tri;
+}
+void Split(TriTreeNode *tri)
+{
+	// We are already split, no need to do it again.
+	if (tri->LeftChild)
+		return;
+
+	// If this triangle is not in a proper diamond, force split our base neighbor
+	if ( tri->BaseNeighbor && (tri->BaseNeighbor->BaseNeighbor != tri) )
+		Split(tri->BaseNeighbor);
+
+	// Create children and link into mesh
+	tri->LeftChild  = AllocateTri();
+	tri->RightChild = AllocateTri();
+
+	// If creation failed, just exit.
+	if ( !tri->LeftChild )
+		return;
+
+	// Fill in the information we can get from the parent (neighbor pointers)
+	tri->LeftChild->BaseNeighbor  = tri->LeftNeighbor;
+	tri->LeftChild->LeftNeighbor  = tri->RightChild;
+
+	tri->RightChild->BaseNeighbor  = tri->RightNeighbor;
+	tri->RightChild->RightNeighbor = tri->LeftChild;
+
+	// Link our Left Neighbor to the new children
+	if (tri->LeftNeighbor != NULL)
+	{
+		if (tri->LeftNeighbor->BaseNeighbor == tri)
+			tri->LeftNeighbor->BaseNeighbor = tri->LeftChild;
+		else if (tri->LeftNeighbor->LeftNeighbor == tri)
+			tri->LeftNeighbor->LeftNeighbor = tri->LeftChild;
+		else if (tri->LeftNeighbor->RightNeighbor == tri)
+			tri->LeftNeighbor->RightNeighbor = tri->LeftChild;
+		else
+			;// Illegal Left Neighbor!
+	}
+
+	// Link our Right Neighbor to the new children
+	if (tri->RightNeighbor != NULL)
+	{
+		if (tri->RightNeighbor->BaseNeighbor == tri)
+			tri->RightNeighbor->BaseNeighbor = tri->RightChild;
+		else if (tri->RightNeighbor->RightNeighbor == tri)
+			tri->RightNeighbor->RightNeighbor = tri->RightChild;
+		else if (tri->RightNeighbor->LeftNeighbor == tri)
+			tri->RightNeighbor->LeftNeighbor = tri->RightChild;
+		else
+			;// Illegal Right Neighbor!
+	}
+
+	// Link our Base Neighbor to the new children
+	if (tri->BaseNeighbor != NULL)
+	{
+		if ( tri->BaseNeighbor->LeftChild )
+		{
+			tri->BaseNeighbor->LeftChild->RightNeighbor = tri->RightChild;
+			tri->BaseNeighbor->RightChild->LeftNeighbor = tri->LeftChild;
+			tri->LeftChild->RightNeighbor = tri->BaseNeighbor->RightChild;
+			tri->RightChild->LeftNeighbor = tri->BaseNeighbor->LeftChild;
+		}
+		else
+			Split( tri->BaseNeighbor);  // Base Neighbor (in a diamond with us) was not split yet, so do that now.
+	}
+	else
+	{
+		// An edge triangle, trivial case.
+		tri->LeftChild->RightNeighbor = NULL;
+		tri->RightChild->LeftNeighbor = NULL;
+	}
+}
+bool Visible (float *a, float *b, float *c)
+{
+	if (pointinfrustum(a) || pointinfrustum(b) || pointinfrustum(c))
+		return true;
+	else
+		return false;
+}
+
+void TestBuildTree (TriTreeNode *tri, int depth, int leftX, int leftY, int rightX, int rightY, int apexX, int apexY)
+{
+	GLfloat leftZ  = heightmap[(leftY*MAP_SIZE)+leftX ];
+	GLfloat rightZ = heightmap[(rightY*MAP_SIZE)+rightX];
+	GLfloat apexZ  = heightmap[(apexY*MAP_SIZE)+apexX ];
+
+	float a[3] = {(float)leftX,		(float)leftY,	(float)leftZ};
+	float b[3] = {(float)rightX,	(float)rightY,	(float)rightZ};
+	float c[3] = {(float)apexX,		(float)apexY,	(float)apexZ};
+
+	if (!Visible (a, b, c))
+		return;		
+
+	if (depth > 0)
+	{
+		depth--;
+		Split (tri);
+		if (tri->LeftChild)
+		{
+			int centerX = (leftX + rightX)>>1;	// Compute X coordinate of center of Hypotenuse
+			int centerY = (leftY + rightY)>>1;	// Compute Y coord...
+
+			TestBuildTree (tri->RightChild, depth, 
+				rightX, rightY, apexX, apexY, centerX, centerY );
+			TestBuildTree (tri->LeftChild, depth, 
+				apexX,  apexY, leftX, leftY, centerX, centerY);
+		}
+	}
+
+}
+
+
+
+void RenderTree ( TriTreeNode *tri, int leftX, int leftY, int rightX, int rightY, int apexX, int apexY )
+{
+	GLfloat leftZ  = heightmap[(leftY*MAP_SIZE)+leftX ];
+	GLfloat rightZ = heightmap[(rightY*MAP_SIZE)+rightX];
+	GLfloat apexZ  = heightmap[(apexY*MAP_SIZE)+apexX ];
+
+	if ( tri->LeftChild )					// All non-leaf nodes have both children, so just check for one
+	{
+		int centerX = (leftX + rightX)>>1;	// Compute X coordinate of center of Hypotenuse
+		int centerY = (leftY + rightY)>>1;	// Compute Y coord...
+
+		RenderTree( tri->LeftChild,  apexX,   apexY, leftX, leftY, centerX, centerY );
+		RenderTree( tri->RightChild, rightX, rightY, apexX, apexY, centerX, centerY );
+	}
+	else									// A leaf node!  Output a triangle to be rendered.
+	{
+		
+		// Calculate normals
+		{
+			float v[3][3];
+			float out[3];
+			
+			// Create a vertex normal for this triangle.
+			// NOTE: This is an extremely slow operation for illustration purposes only.
+			//       You should use a texture map with the lighting pre-applied to the texture.
+			v[0][0] = (GLfloat) leftX;
+			v[0][1] = (GLfloat) leftZ;
+			v[0][2] = (GLfloat) leftY;
+			
+			v[1][0] = (GLfloat) rightX;
+			v[1][1] = (GLfloat) rightZ ;
+			v[1][2] = (GLfloat) rightY;
+			
+			v[2][0] = (GLfloat) apexX;
+			v[2][1] = (GLfloat) apexZ ;
+			v[2][2] = (GLfloat) apexY;
+			
+			calcNormal( v, out );
+			glNormal3fv( out );
+		}
+		numtris++;
+		// Output the LEFT VERTEX for the triangle
+		
+
+		glColor3f  (0.0, leftZ/255, 0.0);
+//		glTexCoord2f(	(GLfloat) leftX/MAX_PATCH, (GLfloat) leftY/MAX_PATCH);
+
+		glVertex3f(		(GLfloat) leftX,
+						(GLfloat) leftZ,
+						(GLfloat) leftY );
+
+		// Output the RIGHT VERTEX for the triangle
+		glColor3f  (0.0, rightZ/255, 0.0);
+//		glTexCoord2f(	(GLfloat) rightX/MAX_PATCH, 	(GLfloat) rightY/MAX_PATCH);
+
+		glVertex3f(		(GLfloat) rightX,
+						(GLfloat) rightZ,
+						(GLfloat) rightY );
+
+		// Output the APEX VERTEX for the triangle
+		glColor3f  (0.0, apexZ/255, 0.0);
+//		glTexCoord2f(	(GLfloat) apexX/MAX_PATCH, (GLfloat) apexY/MAX_PATCH);
+
+		glVertex3f(		(GLfloat) apexX,
+						(GLfloat) apexZ,
+						(GLfloat) apexY );
+	}
+}
+
+void RoamFrame()
+{
+	// try do with one mesh for completeness
+#define SPLITS		10
+	numtris = 0;
+	NextTri = 0;
+
+	left = AllocateTri();
+	right = AllocateTri();
+
+	left->BaseNeighbor = right;
+	right->BaseNeighbor = left;
+	// Dynamically rebuild the tree!!
+
+//	
+	glDisable(GL_LIGHTING);
+
+	glPushMatrix();
+	glScalef (0.1f, 0.1f, 0.1f);
+
+//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	TestBuildTree(left, SPLITS, 
+		0,				(MAP_SIZE-1), 
+		(MAP_SIZE-1),	0, 
+		0,				0);
+	TestBuildTree(right, SPLITS,
+		(MAP_SIZE-1),	0, 
+		0,				(MAP_SIZE-1), 
+		(MAP_SIZE-1),	(MAP_SIZE-1));
+//	glBindTexture(GL_TEXTURE_2D, map_texture[1][0]);
+	glDisable(GL_TEXTURE_2D);
+	glBegin(GL_TRIANGLES);
+	{
+		RenderTree(left, 
+			0,				(MAP_SIZE-1), 
+			(MAP_SIZE-1),	0, 
+			0,				0);
+		RenderTree(right, 
+			(MAP_SIZE-1),	0, 
+			0,				(MAP_SIZE-1), 
+			(MAP_SIZE-1),	(MAP_SIZE-1));		
+	}
+	glEnd();
+	glEnable(GL_TEXTURE_2D);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glEnable(GL_LIGHTING);
+
+	glPopMatrix();
+
+}
+
+void LoadHeight ()
+{
+	FILE *f;
+	char filename[] = "map/heightmap.raw";
+	int x, y;
+	numtris = 0;
+	NextTri = 0;
+
+	for (x = 0; x < TRIS_PER_SIDE; x++)
+	{
+		for (y = 0; y < TRIS_PER_SIDE; y++)
+		{
+			char name[64], temp[64];
+			strcpy(temp, filename);
+			temp[strlen(filename)-4]=0;
+			sprintf(name, "%s%d_%d.tga", temp, x, y);
+			patch[x][y].texture = LoadTexture(name);
+		}
+	}
+
+	if (f = fopen (filename, "rb"))
+	{
+		int i;
+		heightmap = (byte *)malloc(MAP_SIZE * MAP_SIZE);
+		i = fread(heightmap, sizeof(byte), MAP_SIZE * MAP_SIZE, f);
+		ConPrintf("Reading Heightmap: %d bytes\n", i);
+		fclose(f);
+	}
+	else
+		ConPrintf("Error: Cant open %s", filename);
+
+
+}

@@ -1,0 +1,216 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+/*
+==========================================================================
+My custom model format.
+
+  Things to add: texture name, texture tiling
+
+==========================================================================
+*/
+typedef enum { false , true } bool;
+
+unsigned int	*faces;
+float			*verts;
+float			*vnorms;
+
+float			*tverts;
+unsigned int	*tfaces;
+
+unsigned int	num_faces;
+unsigned int	num_verts;
+unsigned int	num_tfaces;
+unsigned int	num_tverts;
+
+FILE			*ase_file;
+FILE			*out_file;
+
+typedef struct {
+	char title[3];
+	unsigned char version;
+	unsigned int numfaces;
+	unsigned int numverts;
+	unsigned int numtfaces;
+	unsigned int numtverts;
+	char texture[64];
+} mdh_header;
+
+void GetInfo ()
+{
+	char data[255];
+
+	printf("\nGetting info.\n");
+	rewind(ase_file);
+
+	while (!feof(ase_file))
+	{  
+		fscanf(ase_file, "%s", &data);
+		if (strcmp ("*COMMENT", data) == 0)
+		{
+			fgets(data, 255, ase_file);
+			printf("Comments: %s", data);
+		}
+		else if (strcmp ("*MESH_NUMVERTEX", data) == 0)
+			fscanf(ase_file, "%d", &num_verts);
+		else if (strcmp ("*MESH_NUMFACES", data) == 0)
+			fscanf(ase_file, "%d", &num_faces);
+		else if (strcmp ("*MESH_NUMTVERTEX", data) == 0)
+			fscanf(ase_file, "%d", &num_tverts);
+		else if (strcmp ("*MESH_NUMTVFACES", data) == 0)
+			fscanf(ase_file, "%d", &num_tfaces);
+	}
+
+}
+
+void GetData ()
+{
+	char data[255];
+	int index;
+
+	rewind(ase_file);
+
+	printf("\nGetting vectors/triangles.\n");
+
+	while (!feof(ase_file))
+	{  
+		fscanf(ase_file, "%s", &data);
+		if (strcmp ("*MESH_VERTEX", data) == 0)
+		{
+			fscanf(ase_file, "%d", &index);
+			fscanf(ase_file, "%f", &verts[index * 3 + 0]);
+			fscanf(ase_file, "%f", &verts[index * 3 + 1]);
+			fscanf(ase_file, "%f", &verts[index * 3 + 2]);
+		}
+		if (strcmp ("*MESH_FACE", data) == 0)
+		{
+			fscanf(ase_file, "%d:", &index);
+			fscanf(ase_file, " A: %d B: %d C: %d", 
+				&faces[3 * index + 0],
+				&faces[3 * index + 1], 
+				&faces[3 * index + 2]);
+		}
+		if (strcmp ("*MESH_TVERT", data) == 0)
+		{
+			fscanf(ase_file, "%d", &index);
+			fscanf(ase_file, "%f %f", 
+				&tverts[index * 3 + 0], 
+				&tverts[index * 3 + 1],
+				&tverts[index * 3 + 2]);
+		}
+		if (strcmp ("*MESH_TFACE", data) == 0)
+		{
+			fscanf(ase_file, "%d", &index);
+			fscanf(ase_file, "%d %d %d", 
+				&tfaces[index * 3 + 0], 
+				&tfaces[index * 3 + 1],
+				&tfaces[index * 3 + 2]);
+		}
+		if (strcmp ("*MESH_VERTEXNORMAL", data) == 0)
+		{
+			fscanf(ase_file, "%d", &index);
+			fscanf(ase_file, "%f %f %f", 
+				&vnorms[index * 3 + 0], 
+				&vnorms[index * 3 + 1],
+				&vnorms[index * 3 + 2]);
+		}
+	}
+}
+
+void Allocate ()
+{
+	faces = (unsigned int *)calloc (num_faces * 3, sizeof(unsigned int));
+	verts = (float *)calloc (num_verts * 3, sizeof(float));
+	vnorms = (float *)calloc (num_verts * 3, sizeof(float));
+	tverts = (float *)calloc (num_tverts * 3, sizeof(float));
+	tfaces = (unsigned int *)calloc (num_tfaces * 3, sizeof(unsigned int));
+}
+
+
+
+void WriteMDH ()
+{
+	mdh_header header;
+
+	strcpy (header.title, "MDH");
+	printf("Enter the texture name/path (max 64): ");
+	scanf("%s", header.texture);
+	header.version = 2;
+	header.numfaces = num_faces;
+	header.numtfaces = num_tfaces;
+	header.numtverts = num_tverts;
+	header.numverts = num_verts;
+
+	fwrite(&header, sizeof (mdh_header), 1, out_file);
+
+	fwrite(verts, sizeof(float), num_verts * 3, out_file);
+	fwrite(faces, sizeof(unsigned int), num_faces * 3, out_file);
+	fwrite(vnorms, sizeof(float), num_verts * 3, out_file);
+	fwrite(tverts, sizeof(float), num_tverts * 3, out_file);
+	fwrite(tfaces, sizeof(unsigned int), num_tfaces * 3, out_file);
+
+}
+void ReadMDH ()
+{
+	mdh_header header;
+	float *vertr;
+	int i;
+
+	fread(&header, sizeof (mdh_header), 1, out_file);
+	printf ("Read Vertexes : %d\nFaces : %d\n", 
+		header.numverts, header.numfaces);
+
+	vertr = (float *)calloc (header.numverts * 3, sizeof(float));
+	fread(vertr, sizeof(float), header.numverts * 3, out_file);
+	for (i=0; i < (int)num_verts; i++)
+	{
+		printf ("%f %f %f\n",
+				vertr[3 * i + 0],
+				vertr[3 * i + 1], 
+				vertr[3 * i + 2]);
+	}	
+
+}
+
+void main ()
+{
+	char filename[256];
+	
+
+	// open the file
+	printf ("Enter ase file name :");
+	scanf("%s", filename);
+
+	if (!(ase_file = fopen (filename, "r")))
+	{
+		printf("Cant open %s", ase_file);
+		return;
+	}
+
+	// get the comment
+	// get quantity of tris, verts, tfaces, tverts, vert normals
+	GetInfo();
+
+	// Allocate memory for those objects
+	Allocate();
+
+	// Get the actual values
+	GetData();
+	fclose (ase_file);
+
+	printf ("Enter output file name :");
+	scanf("%s", filename);
+
+	if (!(out_file = fopen (filename, "wb")))
+	{
+		printf("Cant open %s", out_file);
+		return;
+	}
+
+	WriteMDH();
+	fclose (out_file);
+	printf("Done.\n");
+
+
+	// dump them out into my file format
+}

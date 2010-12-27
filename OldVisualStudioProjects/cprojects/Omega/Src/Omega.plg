@@ -1,0 +1,73 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: Omega - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x809 /fo"Debug/resources.res" /d "_DEBUG" "C:\OpeGLStuff\Omega\Src\resources.rc"" 
+Creating temporary file "C:\WINDOWS\TEMP\RSPF2F3.TMP" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /Fp"Debug/Omega.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\OpeGLStuff\Omega\Src\omega_fog.c"
+"C:\OpeGLStuff\Omega\Src\omega_gl.c"
+"C:\OpeGLStuff\Omega\Src\omega_roam.c"
+"C:\OpeGLStuff\Omega\Src\omega_texture.c"
+]
+Creating command line "cl.exe @C:\WINDOWS\TEMP\RSPF2F3.TMP" 
+Creating temporary file "C:\WINDOWS\TEMP\RSPF2F4.TMP" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib opengl32.lib glu32.lib /nologo /subsystem:windows /incremental:yes /pdb:"Debug/OmegaDebug.pdb" /debug /machine:I386 /out:"../OmegaDebug.exe" /pdbtype:sept 
+.\Debug\omega_console.obj
+.\Debug\omega_fog.obj
+.\Debug\omega_frustum.obj
+.\Debug\omega_gl.obj
+.\Debug\omega_input.obj
+.\Debug\omega_main.obj
+.\Debug\omega_model.obj
+.\Debug\omega_nfotex.obj
+.\Debug\omega_object.obj
+.\Debug\omega_particles.obj
+.\Debug\omega_roam.obj
+.\Debug\omega_skybox.obj
+.\Debug\omega_text.obj
+.\Debug\omega_texture.obj
+.\Debug\omega_tga.obj
+.\Debug\omega_timing.obj
+.\Debug\omega_utils.obj
+.\Debug\omega_varrays.obj
+.\Debug\omega_vid.obj
+.\Debug\resources.res
+]
+Creating command line "link.exe @C:\WINDOWS\TEMP\RSPF2F4.TMP"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+omega_fog.c
+omega_gl.c
+C:\OpeGLStuff\Omega\Src\omega_gl.c(19) : warning C4244: '=' : conversion from 'double ' to 'float ', possible loss of data
+C:\OpeGLStuff\Omega\Src\omega_gl.c(37) : warning C4013: 'calcfrustumnormals' undefined; assuming extern returning int
+C:\OpeGLStuff\Omega\Src\omega_gl.c(106) : warning C4013: 'RoamFrame' undefined; assuming extern returning int
+C:\OpeGLStuff\Omega\Src\omega_gl.c(110) : warning C4013: 'ModelFrame' undefined; assuming extern returning int
+C:\OpeGLStuff\Omega\Src\omega_gl.c(111) : warning C4013: 'RunEntities' undefined; assuming extern returning int
+C:\OpeGLStuff\Omega\Src\omega_gl.c(112) : warning C4013: 'SkyRender' undefined; assuming extern returning int
+C:\OpeGLStuff\Omega\Src\omega_gl.c(115) : warning C4013: 'drawfog' undefined; assuming extern returning int
+omega_roam.c
+C:\OpeGLStuff\Omega\Src\omega_roam.c(220) : warning C4244: 'initializing' : conversion from 'double ' to 'float ', possible loss of data
+C:\OpeGLStuff\Omega\Src\omega_roam.c(241) : warning C4013: 'pointinfrustum' undefined; assuming extern returning int
+C:\OpeGLStuff\Omega\Src\omega_roam.c(250) : warning C4244: 'initializing' : conversion from 'float ' to 'int ', possible loss of data
+C:\OpeGLStuff\Omega\Src\omega_roam.c(319) : warning C4244: '=' : conversion from 'int ' to 'float ', possible loss of data
+C:\OpeGLStuff\Omega\Src\omega_roam.c(321) : warning C4244: '=' : conversion from 'int ' to 'float ', possible loss of data
+C:\OpeGLStuff\Omega\Src\omega_roam.c(357) : warning C4244: 'initializing' : conversion from 'float ' to 'int ', possible loss of data
+C:\OpeGLStuff\Omega\Src\omega_roam.c(387) : warning C4013: 'LoadTexture' undefined; assuming extern returning int
+omega_texture.c
+Linking...
+
+
+
+<h3>Results</h3>
+OmegaDebug.exe - 0 error(s), 14 warning(s)
+</pre>
+</body>
+</html>
